@@ -15,6 +15,7 @@ use App\Models\ProductDetail;
 use App\Models\User;
 use App\Models\WalletHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
@@ -203,7 +204,6 @@ class PaymentController extends Controller
             ProductDetail::whereIn('id', $items)->update(['is_sold'=>Status::YES]);
 
             $wallet = $user->wallet;
-            // Credit wallet here
             $wallet->balance -= $amount;
             $wallet->save();
 
@@ -243,30 +243,43 @@ class PaymentController extends Controller
             return back()->withNotify($notify);
         }
 
-        $charge = $gate->fixed_charge + ($amount * $gate->percent_charge / 100);
-        $payable = $amount + $charge;
-        $final_amo = $payable * $gate->rate;
+        $trx_id = getTrx();
 
-//        $data = new WalletHistory();
-//        $data->wallet_id = $user->wallet->id;
-//        $data->order_id = '';
-//        $data->transaction_type = '1';
-//        $data->final_amo = $final_amo;
-//        $data->amount = $amount;
-//        $data->status = '0';
-//        $data->method_code = $request->gateway;
-//        $data->method_currency = strtoupper($gate->currency);
-//        $data->trx = getTrx();
-//        $data->save();
+        $dep = new Deposit();
+        $dep->user_id = Auth::id();
+        $dep->order_id = "ORD".getTrx();
+        $dep->method_code = "250";
+        $dep->amount = $request->amount;
+        $dep->method_currency = "NGN";
+        $dep->charge = 0;
+        $dep->rate = 0;
+        $dep->final_amo = $request->amount;
+        $dep->trx = $trx_id;
+        $dep->status = 0;
+        $dep->save();
 
-//        session()->put('Track', $data->trx);
-        return to_route('user.wallet.confirm');
+
+        $key = env('WEBKEY');
+        $email = Auth::user()->email;
+        $amount = round($request->amount, 2);
+        $url = "https://web.sprintpay.online/pay?amount=$amount&key=$key&ref=$trx_id&email=$email";
+
+        $mssage = $email."| wants to fund | ".$amount. "| ref - $trx_id";
+        send_notification($mssage);
+
+
+        $pageTitle = 'Payment Confirm';
+        return view($this->activeTemplate.'user.payment.SprintPay', compact('url', 'pageTitle', 'amount'));
+
     }
 
     public function depositWalletConfirm()
     {
+
         $track = session()->get('Track');
-        $deposit = WalletHistory::where('trx', $track)->where('status',Status::PAYMENT_INITIATE)->orderBy('id', 'DESC')->with('gateway')->firstOrFail();
+
+        dd($track);
+        $deposit = Deposit::where('trx', $track)->where('status',Status::PAYMENT_INITIATE)->orderBy('id', 'DESC')->with('gateway')->firstOrFail();
 
         if ($deposit->method_code >= 1000) {
             return to_route('user.deposit.manual.confirm');
@@ -279,7 +292,6 @@ class PaymentController extends Controller
         $data = $new::process($deposit);
         $data = json_decode($data);
 
-        // dd($data);
 
         if (isset($data->error)) {
             $notify[] = ['error', $data->message];
@@ -295,8 +307,7 @@ class PaymentController extends Controller
             $deposit->save();
         }
 
-        $pageTitle = 'Payment Confirm';
-        return view($this->activeTemplate . $data->view, compact('data', 'pageTitle', 'deposit'));
+
     }
 
     public static function userWalletDataUpdate($deposit,$isManual = null)
@@ -365,10 +376,8 @@ class PaymentController extends Controller
 
         $user = auth()->user();
 
-        // dd($user->wallet->balance < $amount, $isWallet);
-
         if($isWallet){
-            if($user->wallet->balance < $amount){
+            if(Auth::user()->balance < $amount){
                 $notify[] = ['error', "Insufficient balance"];
                 return back()->withNotify($notify);
             }
@@ -402,32 +411,32 @@ class PaymentController extends Controller
         $order->total_amount = $amount;
         $order->save();
 
-        if(!$isWallet){
-            $data = new Deposit();
-            $data->user_id = $user->id;
-            $data->order_id = $order->id;
-            $data->method_code = $gate->method_code;
-            $data->method_currency = strtoupper($gate->currency);
-            $data->amount = $amount;
-            $data->charge = $charge;
-            $data->rate = $gate->rate;
-            $data->final_amo = $final_amo;
-            $data->btc_amo = 0;
-            $data->btc_wallet = "";
-            $data->trx = getTrx();
-            $data->save();
-        }else{
-            $data = new WalletHistory();
-            $data->wallet_id = $user->wallet->id;
-            $data->order_id = $order->id;
-            $data->transaction_type = '2';
-            $data->final_amo = $final_amo;
-            $data->amount = $amount;
-            $data->status = '1';
-            $data->method_code = '';
-            $data->method_currency = 'NGN';
-            $data->save();
-        }
+//        if(!$isWallet){
+//            $data = new Deposit();
+//            $data->user_id = $user->id;
+//            $data->order_id = $order->id;
+//            $data->method_code = $gate->method_code;
+//            $data->method_currency = strtoupper($gate->currency);
+//            $data->amount = $amount;
+//            $data->charge = $charge;
+//            $data->rate = $gate->rate;
+//            $data->final_amo = $final_amo;
+//            $data->btc_amo = 0;
+//            $data->btc_wallet = "";
+//            $data->trx = getTrx();
+//            $data->save();
+//        }else{
+//            $data = new WalletHistory();
+//            $data->wallet_id = $user->wallet->id;
+//            $data->order_id = $order->id;
+//            $data->transaction_type = '2';
+//            $data->final_amo = $final_amo;
+//            $data->amount = $amount;
+//            $data->status = '1';
+//            $data->method_code = '';
+//            $data->method_currency = 'NGN';
+//            $data->save();
+//        }
 
 
         $unsoldProductDetails = $product->unsoldProductDetails;
@@ -454,10 +463,12 @@ class PaymentController extends Controller
             $items = @$order->orderItems->pluck('product_detail_id')->toArray() ?? [];
             ProductDetail::whereIn('id', $items)->update(['is_sold'=>Status::YES]);
 
-            $wallet = $user->wallet;
-            // Credit wallet here
-            $wallet->balance -= $amount;
-            $wallet->save();
+            User::where('id', Auth::id())->decrement('balance', $amount);
+
+            $amt = number_format($amount, 2);
+
+            $message = Auth::user()->email." Just bought item with | ID-".$order->id."| amount - $amt";
+            send_notification($message);
 
             $notify[] = ['success', 'Your order has been placed successfully!'];
             return to_route('user.orders')->withNotify($notify);
@@ -465,7 +476,7 @@ class PaymentController extends Controller
 
     }
 
-    public function depositConfirm()
+    public function depositConfirm(request $request)
     {
         $track = session()->get('Track');
         $deposit = Deposit::where('trx', $track)->where('status',Status::PAYMENT_INITIATE)->orderBy('id', 'DESC')->with('gateway')->firstOrFail();

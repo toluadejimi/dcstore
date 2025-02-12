@@ -10,7 +10,7 @@
                     @csrf
                     <input type="hidden" name="id">
                     <input type="hidden" name="currency">
-                    <div class="modal-body"> 
+                    <div class="modal-body">
                         <div class="small">
                             <p class="text mb-3"></p>
                             <ul class="list-group list-group-flush preview-details">
@@ -46,7 +46,8 @@
                                 <label class="form--label">@lang('Select Gateway')</label>
                                 <select class="form--control form-select" name="gateway" required>
                                     <option value="">@lang('Select One')</option>
-                                    <option value="wallet" data-gateway="{'currency': 'NGN'}">Pay with wallet (Balance: NGN {{ number_format($wallet->balance, 2) }})</option>
+
+                                    <option value="wallet" data-gateway="{'currency': 'NGN'}">Pay with wallet (Balance: NGN {{ number_format(Auth::user()->balance , 2) }})</option>
                                     @foreach($gatewayCurrency as $data)
                                         <option value="{{$data->method_code}}" data-gateway="{{ $data }}">{{$data->name}}</option>
                                     @endforeach
@@ -65,7 +66,7 @@
             </div>
         @else
             <div class="modal-content">
-                <div class="modal-header"> 
+                <div class="modal-header">
                     <h6 class="modal-title method-name">@lang('Login required')</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -75,10 +76,10 @@
                 <div class="modal-footer">
                     <a href="{{ route('user.login', ['redirect'=>request()->fullUrl()]) }}" class="btn btn-sm btn--base w-100">@lang('Login')</a>
                 </div>
-            </div> 
+            </div>
         @endauth
     </div>
-</div> 
+</div>
 
 @auth
     @push('style')
@@ -95,7 +96,7 @@
             #purchaseModal .modal-body .text {
                 font-size: 0.875rem !important;
             }
-            
+
             #purchaseModal .modal-footer .btn.w-100 {
                 border-radius: 0 !important;
             }
@@ -111,7 +112,7 @@
                     var modal = $('#purchaseModal');
 
                     baseAmount = parseFloat($(this).data('amount'));
-            
+
                     var text = $(this).data('text');
                     var price = $(this).data('price');
                     var qty = $(this).data('qty');
@@ -175,7 +176,7 @@
                     $('.payable').text(payable);
                     var final_amo = (parseFloat((parseFloat(amount) + parseFloat(charge)))*rate).toFixed(toFixedDigit);
                     $('.final_amo').text(final_amo);
-                    
+
                     if (resource.currency != '{{ $general->cur_text }}') {
                         var rateElement = `<span class="fw-bold">@lang('Conversion Rate')</span> <span><span  class="fw-bold">1 {{__($general->cur_text)}} = <span class="rate">${rate}</span>  <span class="method_currency">${resource.currency}</span></span></span>`;
                         $('.rate-element').html(rateElement)
@@ -201,7 +202,7 @@
             })(jQuery);
         </script>
     @endpush
-@else 
+@else
     @push('script')
         <script>
             (function ($) {

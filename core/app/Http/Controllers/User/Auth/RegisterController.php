@@ -11,6 +11,7 @@ use App\Models\UserWallet;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -92,11 +93,9 @@ class RegisterController extends Controller
         }
 
         event(new Registered($user = $this->create($request->all())));
-
-        // Create a wallet for the user
-        $userWallet = UserWallet::create([
-            'user_id' => $user->id,
-        ]);
+        
+        $message = $user->email." Just signed up";
+        send_notification($message);
 
         $this->guard()->login($user);
 

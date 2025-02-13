@@ -28,7 +28,7 @@ class PaymentController extends Controller
 
         if ($user) {
             // Access the user's wallet if logged in
-            $userWallet = $user->wallet;
+            $userWallet = Auth::user()->balance;
         }
 
         $gatewayCurrency = GatewayCurrency::whereHas('method', function ($gate) {
@@ -122,7 +122,7 @@ class PaymentController extends Controller
         // dd($user->wallet->balance < $amount, $isWallet);
 
         if($isWallet){
-            if($user->wallet->balance < $amount){
+            if(Auth::user()->balance < $amount){
                 $notify[] = ['error', "Insufficient balance"];
                 return back()->withNotify($notify);
             }
@@ -172,7 +172,7 @@ class PaymentController extends Controller
             $data->save();
         }else{
             $data = new WalletHistory();
-            $data->wallet_id = $user->wallet->id;
+            $data->wallet_id = Auth::user()->id;
             $data->order_id = $order->id;
             $data->transaction_type = '2';
             $data->final_amo = $final_amo;
@@ -203,9 +203,7 @@ class PaymentController extends Controller
             $items = @$order->orderItems->pluck('product_detail_id')->toArray() ?? [];
             ProductDetail::whereIn('id', $items)->update(['is_sold'=>Status::YES]);
 
-            $wallet = $user->wallet;
-            $wallet->balance -= $amount;
-            $wallet->save();
+            User::where('id', Auth::id())->decrement('balance', $amount);
 
             $notify[] = ['success', 'Your order has been placed successfully!'];
             return to_route('user.orders')->withNotify($notify);

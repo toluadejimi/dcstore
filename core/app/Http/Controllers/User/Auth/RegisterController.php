@@ -93,7 +93,7 @@ class RegisterController extends Controller
         }
 
         event(new Registered($user = $this->create($request->all())));
-        
+
         $message = $user->email." Just signed up";
         send_notification($message);
 

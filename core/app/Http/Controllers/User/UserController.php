@@ -7,6 +7,7 @@ use App\Models\Deposit;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\SupportTicket;
+use App\Models\User;
 use App\Models\UserWallet;
 use App\Models\WalletHistory;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class UserController extends Controller
     public function home()
     {
         $pageTitle = 'Dashboard';
-        $user = auth()->user(); 
+        $user = auth()->user();
 
         $widget['total_wallet_amount'] = UserWallet::where('user_id', $user->id)->sum('balance');
         $widget['total_payments'] = Deposit::where('user_id', $user->id)->successful()->sum('amount');
@@ -28,7 +29,7 @@ class UserController extends Controller
         $latestDeposits = $user->deposits()->with('gateway', 'order')->orderBy('id','desc')->take(5)->get();
 
         return view($this->activeTemplate . 'user.dashboard', compact('pageTitle', 'user', 'widget', 'latestDeposits'));
-    } 
+    }
 
     public function depositHistory(Request $request)
     {
@@ -87,7 +88,7 @@ class UserController extends Controller
             'firstname' => 'required',
             'lastname' => 'required',
         ];
-        
+
         if ($user->login_by) {
             if (!$user->email) {
                 $validationRule = array_merge($validationRule, [
@@ -152,5 +153,70 @@ class UserController extends Controller
         $orderItems = OrderItem::whereIn('id', $order->orderItems->pluck('id') ?? [])->with('product', 'productDetail')->paginate(getPaginate());
         return view($this->activeTemplate.'user.order_details', compact('pageTitle', 'order', 'orderItems'));
     }
+
+
+    public function e_fund(request $request){
+
+        $get_user =  User::where('email', $request->email)->first() ?? null;
+
+        if($get_user == null){
+
+            return response()->json([
+                'status' => false,
+                'message' => 'No user found, please check email and try again',
+            ]);
+        }
+
+
+        User::where('email', $request->email)->increment('balance', $request->amount) ?? null;
+
+        $amount = number_format($request->amount, 2);
+
+        $get_depo = Deposit::where('trx', $request->order_id)->first() ?? null;
+        if ($get_depo == null){
+            $trx = new Deposit();
+            $trx->trx = $request->order_id;
+            $trx->status = 1;
+            $trx->user_id = $get_user->id;
+            $trx->amount = $request->amount;
+            $trx->method_code = 250;
+            $trx->save();
+        }else{
+            Deposit::where('trx', $request->order_id)->update(['status'=> 1]);
+        }
+
+
+        $message = $request->email."| just funded ".$request->amount." | ".date('y-m-d-m-Y-H-i-s');
+        send_notification($message);
+
+        return response()->json([
+            'status' => true,
+            'message' => "NGN $amount has been successfully added to your wallet",
+        ]);
+
+    }
+
+
+    public function verify_username(request $request)
+    {
+
+        $get_user =  User::where('email', $request->email)->first() ?? null;
+
+        if($get_user == null){
+
+            return response()->json([
+                'username' => "Not Found, Pleas try again"
+            ]);
+
+        }
+
+        return response()->json([
+            'username' => $get_user->username
+        ]);
+
+
+
+    }
+
 
 }

@@ -129,8 +129,8 @@ class ManageUsersController extends Controller
         $wallet = $user->wallet;
 
         // Update wallet balacne here
-        $wallet->balance = $wallet_balance;
-        $wallet->save();
+        $user->balance = $wallet_balance;
+        $user->save();
 
         $user->mobile = $dialCode ?? "" . $request->mobile;
         $user->country_code = $countryCode;

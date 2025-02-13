@@ -80,11 +80,11 @@ class PaymentController extends Controller
             <option value="">Select One</option>
             <option value="wallet" data-gateway="{\'currency\': \'NGN\'}">Pay with wallet (Balance: NGN' . number_format(Auth::user()->balance, 2) . ')</option>';
 
-        foreach($gatewayCurrency as $data){
-            $result .= '<option value="' . $data->method_code . '" data-gateway="' . $data . '">'. $data->name . '</option>';
-        }
-
-        $result .= '</select></div></div>';
+//        foreach($gatewayCurrency as $data){
+//            $result .= '<option value="' . $data->method_code . '" data-gateway="' . $data . '">'. $data->name . '</option>';
+//        }
+//
+//        $result .= '</select></div></div>';
 
         return $result;
     }

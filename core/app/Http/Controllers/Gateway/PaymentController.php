@@ -78,7 +78,7 @@ class PaymentController extends Controller
             <label class="form--label">Select Gateway</label>
             <select class="form--control form-select" name="gateway" required>
             <option value="">Select One</option>
-            <option value="wallet" data-gateway="{\'currency\': \'NGN\'}">Pay with wallet (Balance: NGN' . number_format($userWallet->balance, 2) . ')</option>';
+            <option value="wallet" data-gateway="{\'currency\': \'NGN\'}">Pay with wallet (Balance: NGN' . number_format(Auth::user()->balance, 2) . ')</option>';
 
         foreach($gatewayCurrency as $data){
             $result .= '<option value="' . $data->method_code . '" data-gateway="' . $data . '">'. $data->name . '</option>';

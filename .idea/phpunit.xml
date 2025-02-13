@@ -4,11 +4,11 @@
     <option name="directories">
       <list>
         <option value="$PROJECT_DIR$/backup/app/Services/Gateway/razorpay/razorpay-php/tests" />
-        <option value="$PROJECT_DIR$/backup/app/Services/Gateway/coingate/coingate-php/tests" />
-        <option value="$PROJECT_DIR$/backup/app/Services/Gateway/stripe/stripe-php/tests" />
-        <option value="$PROJECT_DIR$/core/tests" />
-        <option value="$PROJECT_DIR$/backup/tests" />
         <option value="$PROJECT_DIR$/api.dcstore.com.ng/tests" />
+        <option value="$PROJECT_DIR$/backup/app/Services/Gateway/stripe/stripe-php/tests" />
+        <option value="$PROJECT_DIR$/backup/app/Services/Gateway/coingate/coingate-php/tests" />
+        <option value="$PROJECT_DIR$/backup/tests" />
+        <option value="$PROJECT_DIR$/core/tests" />
       </list>
     </option>
   </component>

@@ -378,6 +378,47 @@
       <path value="$PROJECT_DIR$/api.dcstore.com.ng/vendor/doctrine/lexer" />
       <path value="$PROJECT_DIR$/api.dcstore.com.ng/vendor/doctrine/inflector" />
       <path value="$PROJECT_DIR$/api.dcstore.com.ng/vendor/league/config" />
+      <path value="$PROJECT_DIR$/core/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/core/vendor/filp/whoops" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/core/vendor/maximebf/debugbar" />
+      <path value="$PROJECT_DIR$/core/vendor/beyondcode/laravel-query-detector" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/core/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/core/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/core/vendor/spatie/flare-client-php" />
+      <path value="$PROJECT_DIR$/core/vendor/spatie/backtrace" />
+      <path value="$PROJECT_DIR$/core/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/core/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/core/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/core/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/core/vendor/spatie/ignition" />
+      <path value="$PROJECT_DIR$/core/vendor/spatie/laravel-ignition" />
+      <path value="$PROJECT_DIR$/core/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/core/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/core/vendor/fakerphp/faker" />
+      <path value="$PROJECT_DIR$/core/vendor/barryvdh/laravel-debugbar" />
+      <path value="$PROJECT_DIR$/core/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/core/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/core/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/core/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/core/vendor/nunomaduro/collision" />
+      <path value="$PROJECT_DIR$/core/vendor/laravel/sail" />
+      <path value="$PROJECT_DIR$/core/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/core/vendor/doctrine/instantiator" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

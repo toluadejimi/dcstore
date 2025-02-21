@@ -9,4 +9,4 @@ use App\Http\Controllers\User\UserController;
 
 
 Route::any('e-fund',  'User\UserController@e_fund')->name('e-fund');
-Route::any('verify',  'User\UserController@e_check')->name('e-check');
+Route::any('verify',  'User\UserController@verify_username')->name('e-check');
